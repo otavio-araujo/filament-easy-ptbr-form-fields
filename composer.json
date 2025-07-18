@@ -33,8 +33,7 @@
     },
     "autoload": {
         "psr-4": {
-            "OtavioAraujo\\FilamentEasyPtbrFormFields\\": "src/",
-            "OtavioAraujo\\FilamentEasyPtbrFormFields\\Database\\Factories\\": "database/factories/"
+            "OtavioAraujo\\FilamentEasyPtbrFormFields\\": "src/"
         }
     },
     "autoload-dev": {
