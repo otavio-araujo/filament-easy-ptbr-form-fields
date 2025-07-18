@@ -4,11 +4,10 @@ namespace OtavioAraujo\FilamentEasyPtbrFormFields\Forms\Components;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Set;
-use Illuminate\Support\Facades\Http;
 use Livewire\Component as Livewire;
+use OtavioAraujo\FilamentEasyPtbrFormFields\Services\CepService;
 
 class CepField extends TextInput
 {
@@ -41,25 +40,63 @@ class CepField extends TextInput
             ->mask('99999-999')
             ->minLength(9)
             ->afterStateUpdated(function ($state, Livewire $livewire, Set $set, Component $component) {
-                $this->getCep($state, $set);
+
+                $this->getCep($state, $set, $livewire, $component);
+
+                $livewire->dispatch('cep-filled');
+
             })
             ->suffixAction(function () {
                 if ($this->actionPosition === 'suffix') {
+
                     return Action::make('search-action-' . $this->getKey())
                         ->label($this->actionLabel)
                         ->hiddenLabel($this->actionLabelHidden)
                         ->icon('heroicon-o-magnifying-glass')
                         ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
-                            $this->getCep($state, $set);
-                        });
-                    //                        ->cancelParentActions();
+                            $this->getCep($state, $set, $livewire, $component);
+                            $livewire->dispatch('cep-filled');
+                        })
+                        ->cancelParentActions();
+
+                }
+
+                return null;
+            })
+            ->prefixAction(function () {
+                if ($this->actionPosition === 'prefix') {
+
+                    return Action::make('search-action-' . $this->getKey())
+                        ->label($this->actionLabel)
+                        ->hiddenLabel($this->actionLabelHidden)
+                        ->icon('heroicon-o-magnifying-glass')
+                        ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
+                            $this->getCep($state, $set, $livewire, $component);
+                            $livewire->dispatch('cep-filled');
+                        })
+                        ->cancelParentActions();
+
                 }
 
                 return null;
             });
     }
 
-    public function actionPosition($position): static
+    public function actionLabel($label): static
+    {
+        $this->actionLabel = $label;
+
+        return $this;
+    }
+
+    public function hiddenActionLabel(bool $hidden): static
+    {
+        $this->actionLabelHidden = $hidden;
+
+        return $this;
+    }
+
+    public function actionPosition(string $position): static
     {
         $this->actionPosition = $position;
 
@@ -122,21 +159,37 @@ class CepField extends TextInput
         return $this;
     }
 
-    private function getCep($state, $set): void
+    private function getCep($state, $set, $livewire, $component): void
     {
-        $response = Http::get('https://viacep.com.br/ws/' . $state . '/json/')->json();
-        $set($this->streetField, $response['logradouro']);
-        $set($this->neighborhoodField, $response['bairro']);
-        $set($this->cityField, $response['localidade']);
-        $set($this->stateField, $response['estado']);
-        $set($this->stateCodeField, $response['uf']);
-        $set($this->ibgeCodeField, $response['ibge']);
+        $cepResponse = CepService::get($state);
+
+        if (! empty($cepResponse['street'])) {
+            $set($this->streetField, $cepResponse['street']);
+        }
+
+        if (! empty($cepResponse['neighborhood'])) {
+            $set($this->neighborhoodField, $cepResponse['neighborhood']);
+        }
+
+        if (! empty($cepResponse['city'])) {
+            $set($this->cityField, $cepResponse['city']);
+        }
+
+        if (! empty($cepResponse['state'])) {
+            $set($this->stateField, $cepResponse['state']);
+        }
+
+        if (! empty($cepResponse['state_code'])) {
+            $set($this->stateCodeField, $cepResponse['state_code']);
+        }
+
+        if (! empty($cepResponse['ibge_code'])) {
+            $set($this->ibgeCodeField, $cepResponse['ibge_code']);
+        }
+
         $set($this->countryField, 'Brasil');
+
         $set($this->countryCodeField, 'BR');
-        Notification::make()
-            ->success()
-            ->title('CEP Encontrado')
-            ->body('CEP: ' . $state)
-            ->send();
+
     }
 }
