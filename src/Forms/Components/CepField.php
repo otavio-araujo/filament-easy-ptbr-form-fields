@@ -51,7 +51,6 @@ class CepField extends TextInput
 
                     return Action::make('search-action-' . $this->getKey())
                         ->label($this->actionLabel)
-                        ->hiddenLabel($this->actionLabelHidden)
                         ->icon('heroicon-o-magnifying-glass')
                         ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
                             $this->getCep($state, $set, $livewire, $component);
