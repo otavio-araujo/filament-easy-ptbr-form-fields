@@ -15,7 +15,7 @@ class CepField extends TextInput
 
     private string $actionLabel = 'Buscar CEP';
 
-    private bool $actionLabelHidden = false;
+    private bool $actionLabelHidden = true;
 
     private string $streetField = 'street';
 
