@@ -33,6 +33,8 @@ class CepField extends TextInput
 
     private string $countryCodeField = 'country_code';
 
+    private ?string $nextFocusTarget = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,11 +42,7 @@ class CepField extends TextInput
             ->mask('99999-999')
             ->minLength(9)
             ->afterStateUpdated(function ($state, Livewire $livewire, Set $set, Component $component) {
-
                 $this->getCep($state, $set, $livewire, $component);
-
-                $livewire->dispatch('cep-filled');
-
             })
             ->suffixAction(function () {
                 if ($this->actionPosition === 'suffix') {
@@ -54,7 +52,6 @@ class CepField extends TextInput
                         ->icon('heroicon-o-magnifying-glass')
                         ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
                             $this->getCep($state, $set, $livewire, $component);
-                            $livewire->dispatch('cep-filled');
                         })
                         ->cancelParentActions();
 
@@ -84,6 +81,13 @@ class CepField extends TextInput
     public function actionLabel($label): static
     {
         $this->actionLabel = $label;
+
+        return $this;
+    }
+
+    public function nextFocusTarget(string $target): static
+    {
+        $this->nextFocusTarget = $target;
 
         return $this;
     }
@@ -189,6 +193,8 @@ class CepField extends TextInput
         $set($this->countryField, 'Brasil');
 
         $set($this->countryCodeField, 'BR');
+
+        $livewire->js("document.getElementById('form.{$this->nextFocusTarget}').focus()");
 
     }
 }
