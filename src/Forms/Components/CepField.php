@@ -43,34 +43,25 @@ class CepField extends TextInput
             ->afterStateUpdated(function ($state, Livewire $livewire, Set $set, Component $component) {
                 $this->getCep($state, $set, $livewire, $component);
             })
-            ->suffixAction(function () {
-                if ($this->actionPosition === 'suffix') {
+            ->suffixAction(fn () => $this->getActionByPosition('suffix'))
+            ->prefixAction(fn () => $this->getActionByPosition('prefix'));
+    }
 
-                    return Action::make('search-action-' . $this->getKey())
-                        ->icon($this->actionIcon)
-                        ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
-                            $this->getCep($state, $set, $livewire, $component);
-                        })
-                        ->cancelParentActions();
+    public function getActionByPosition(string $actionPositionType): ?Action
+    {
+        if (($this->actionPosition === 'suffix' && $actionPositionType === 'suffix')
+            || ($this->actionPosition === 'prefix' && $actionPositionType === 'prefix')) {
 
-                }
+            return Action::make('search-action-' . $this->getKey())
+                ->icon($this->actionIcon)
+                ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
+                    $this->getCep($state, $set, $livewire, $component);
+                })
+                ->cancelParentActions();
 
-                return null;
-            })
-            ->prefixAction(function () {
-                if ($this->actionPosition === 'prefix') {
+        }
 
-                    return Action::make('search-action-' . $this->getKey())
-                        ->icon('heroicon-o-magnifying-glass')
-                        ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
-                            $this->getCep($state, $set, $livewire, $component);
-                        })
-                        ->cancelParentActions();
-
-                }
-
-                return null;
-            });
+        return null;
     }
 
     public function nextFocusTarget(string $target): static
