@@ -127,6 +127,6 @@ class CepService
 
     private static function sanitizeCep(string $cep): string
     {
-        return preg_replace('/[^0-9]/', '', $cep);
+        return mb_substr(str_pad(str_replace(['.', '-', '/', '(', ')', ' '], '', $cep), 8, '0', STR_PAD_LEFT), 0, 8);
     }
 }

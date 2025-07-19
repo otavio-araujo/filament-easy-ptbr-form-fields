@@ -38,11 +38,9 @@ class CepField extends TextInput
     {
         parent::setUp();
         $this
-            ->required()
             ->mask('99999-999')
             ->minLength(9)
             ->afterStateUpdated(function ($state, Livewire $livewire, Set $set, Component $component) {
-                $livewire->validateOnly($component->getKey());
                 $this->getCep($state, $set, $livewire, $component);
             })
             ->suffixAction(fn () => $this->getActionByPosition('suffix'))
@@ -57,7 +55,6 @@ class CepField extends TextInput
             return Action::make('search-action-' . $this->getKey())
                 ->icon($this->actionIcon)
                 ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
-                    $livewire->validateOnly($component->getKey());
                     $this->getCep($state, $set, $livewire, $component);
                 })
                 ->cancelParentActions();
@@ -146,8 +143,15 @@ class CepField extends TextInput
 
     private function getCep($state, $set, $livewire, $component): void
     {
+        $livewire->validateOnly($component->getKey());
 
         $cepResponse = CepService::get($state);
+
+        if (empty($cepResponse)) {
+            $livewire->js("document.getElementById('{$component->getKey()}').focus()");
+
+            return;
+        }
 
         if (! empty($cepResponse['street'])) {
             $set($this->streetField, $cepResponse['street']);

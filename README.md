@@ -1,4 +1,4 @@
-# My first package ever.
+# Filament Easy pt_BR Form Fields
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/otavio-araujo/filament-easy-ptbr-form-fields.svg?style=flat-square)](https://packagist.org/packages/otavio-araujo/filament-easy-ptbr-form-fields)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/otavio-araujo/filament-easy-ptbr-form-fields/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/otavio-araujo/filament-easy-ptbr-form-fields/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -7,7 +7,12 @@
 
 
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+This package provides a custom CEP form field commonly used in Brazilian's web applications integrated with
+ViaCep, BrasilAPI and AwesomeAPI web services.
+
+## Filament Compatibility
+
+Compatible with Filament v4 and above.
 
 ## Installation
 
@@ -17,37 +22,35 @@ You can install the package via composer:
 composer require otavio-araujo/filament-easy-ptbr-form-fields
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="filament-easy-ptbr-form-fields-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="filament-easy-ptbr-form-fields-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="filament-easy-ptbr-form-fields-views"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
 ## Usage
 
+### Basic Usage
+The custom field searches for CEP and fills up the form fields with the data returned by the web service.
+
+**By default, the fields that will be filled up are:**
+- street;
+- neighborhood;
+- city;
+- state;
+- state_code;
+- ibge_code;
+- and country.
 ```php
-$filamentEasyPtbrFormFields = new OtavioAraujo\FilamentEasyPtbrFormFields();
-echo $filamentEasyPtbrFormFields->echoPhrase('Hello, OtavioAraujo!');
+...
+ 
+CepField::make('postal_code'),
+
+TextInput::make('street'),
+TextInput::make('neighborhood'),
+TextInput::make('city'),
+TextInput::make('state'),
+TextInput::make('state_code'),
+TextInput::make('ibge_code'),
+TextInput::make('country'),
+TextInput::make('country_code'),
+TextInput::make('number'),
+
+...
 ```
 
 ## Testing
@@ -66,12 +69,12 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
 
 ## Credits
 
 - [Otávio Araújo](https://github.com/otavio-araujo)
-- [All Contributors](../../contributors)
+- [All Contributors](.github/CONTRIBUTING.md)
 
 ## License
 
