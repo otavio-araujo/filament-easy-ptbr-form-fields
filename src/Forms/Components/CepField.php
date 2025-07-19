@@ -2,6 +2,7 @@
 
 namespace OtavioAraujo\FilamentEasyPtbrFormFields\Forms\Components;
 
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -13,9 +14,7 @@ class CepField extends TextInput
 {
     private string $actionPosition = 'suffix';
 
-    private string $actionLabel = 'Buscar CEP';
-
-    private bool $actionLabelHidden = true;
+    private string | BackedEnum $actionIcon = 'heroicon-o-magnifying-glass';
 
     private string $streetField = 'street';
 
@@ -48,8 +47,7 @@ class CepField extends TextInput
                 if ($this->actionPosition === 'suffix') {
 
                     return Action::make('search-action-' . $this->getKey())
-                        ->label($this->actionLabel)
-                        ->icon('heroicon-o-magnifying-glass')
+                        ->icon($this->actionIcon)
                         ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
                             $this->getCep($state, $set, $livewire, $component);
                         })
@@ -63,12 +61,9 @@ class CepField extends TextInput
                 if ($this->actionPosition === 'prefix') {
 
                     return Action::make('search-action-' . $this->getKey())
-                        ->label($this->actionLabel)
-                        ->hiddenLabel($this->actionLabelHidden)
                         ->icon('heroicon-o-magnifying-glass')
                         ->action(function ($state, Livewire $livewire, Set $set, Component $component) {
                             $this->getCep($state, $set, $livewire, $component);
-                            $livewire->dispatch('cep-filled');
                         })
                         ->cancelParentActions();
 
@@ -78,13 +73,6 @@ class CepField extends TextInput
             });
     }
 
-    public function actionLabel($label): static
-    {
-        $this->actionLabel = $label;
-
-        return $this;
-    }
-
     public function nextFocusTarget(string $target): static
     {
         $this->nextFocusTarget = $target;
@@ -92,9 +80,9 @@ class CepField extends TextInput
         return $this;
     }
 
-    public function hiddenActionLabel(bool $hidden): static
+    public function actionIcon(string | BackedEnum $icon): static
     {
-        $this->actionLabelHidden = $hidden;
+        $this->actionIcon = $icon;
 
         return $this;
     }
